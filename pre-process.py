@@ -4,7 +4,7 @@ import os
 def main():
     
     project_path =  os.getcwd()
-    data_folder = 'dataset'
+    data_folder = 'dataset/'
     print('Loading data')
     with np.load(os.path.join(project_path, data_folder, "mnist.npz"), allow_pickle=True) as file:
         x_train, y_train = file['x_train'], file['y_train']
