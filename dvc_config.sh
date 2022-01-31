@@ -1,7 +1,7 @@
 #!/bin/sh
 
-DVC_BUCKET = s3://dvc-bucket/
-DVC_ENDPOINT_URL = http://10.105.56.43:9000
+DVC_BUCKET = "s3://dvc-bucket/"
+DVC_ENDPOINT_URL = "http://10.105.56.43:9000"
 DVC_AWS_ACCESS_KEY_ID = "minio"
 DVC_AWS_SECRET_ACCESS_KEY = "Do&BfNOtNcWqGtWV5i"
 
