@@ -34,10 +34,10 @@ RUN ln -s $(which python3) /usr/local/bin/python
 ARG TF_PACKAGE=tensorflow
 RUN python3 -m pip install --no-cache-dir ${TF_PACKAGE}
 
+WORKDIR /app
+
 ADD requirements.txt /
 RUN python3 -m pip install --no-cache-dir -r /requirements.txt
-
-WORKDIR /app
 
 ENTRYPOINT ["/bin/sh"]
 
