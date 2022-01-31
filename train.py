@@ -22,7 +22,7 @@ def main():
         tf.keras.layers.Dense(10),
     ])
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.002)
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     model.compile(optimizer=optimizer,
                   loss=loss_fn,
@@ -32,7 +32,7 @@ def main():
     # This enables Valohai to version your metadata
     # and for you to use it to compare experiments
     mlflow.keras.autolog()
-    results = model.fit(x_train, y_train, epochs=20,validation_data=(x_test, y_test))
+    results = model.fit(x_train, y_train, epochs=10,validation_data=(x_test, y_test))
 
     #with mlflow.start_run() as run:
     #    mlflow.keras.lpipog_model(model, "mnist-keras")

@@ -44,10 +44,4 @@ ENTRYPOINT ["/bin/sh"]
 
 
 
-#RUN git clone ${GIT_REPO} .
 
-#RUN dvc remote add -d minikubeminio s3://dvc-bucket/
-#RUN dvc remote modify minikubeminio endpointurl http://0.0.0.0:9000
-#RUN dvc remote modify minikubeminio access_key_id ${DVC_AWS_ACCESS_KEY_ID}
-#RUN dvc remote modify minikubeminio secret_access_key ${DVC_AWS_SECRET_ACCESS_KEY}
-#RUN dvc pull
