@@ -21,7 +21,7 @@ fi
 # Configure our user and email to commit as.
 git config user.name "${COMMIT_USER}"
 git config user.email "${COMMIT_EMAIL}"
-#git remote add origin ${GIT_REPO}
+git remote modify origin ${GIT_REPO}
 #it checkout -t origin ${GIT_BRANCH}
 
 dvc pull
