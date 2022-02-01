@@ -12,7 +12,6 @@ set -e -x
 if [ ! -d ~/.ssh ]; then
 	mkdir /root/.ssh
 	cp /secret/mountpath/ssh-privatekey /root/.ssh/id_rsa
-	ls -la /root/.ssh
 	chmod 700 /root/.ssh
 	chmod 600 /root/.ssh/id_rsa
 	#echo -e "Host *\n    StrictHostKeyChecking no\n    UserKnownHostsFile=/dev/null\n" > /root/.ssh/config
@@ -31,9 +30,3 @@ git config user.email "${COMMIT_EMAIL}"
 #dvc remote modify minikubeminio access_key_id "minio"
 #dvc remote modify minikubeminio secret_access_key "Do&BfNOtNcWqGtWV5i"
 dvc pull
-
-#dvc remote add -d minikubeminio s3://dvc-bucket/
-#dvc remote modify minikubeminio endpointurl http://10.105.56.43:9000
-#dvc remote modify minikubeminio access_key_id "minio"
-#dvc remote modify minikubeminio secret_access_key "Do&BfNOtNcWqGtWV5i"
-#dvc pull
