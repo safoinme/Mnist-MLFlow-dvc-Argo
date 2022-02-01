@@ -23,8 +23,8 @@ git status
 # Configure our user and email to commit as.
 ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 ssh-keygen -t rsa -C "${COMMIT_EMAIL}"
-git config user.name "${COMMIT_USER}"
-git config user.email "${COMMIT_EMAIL}"
+git config --global user.name "${COMMIT_USER}"
+git config --global user.email "${COMMIT_EMAIL}"
 git remote set-url origin ${GIT_REPO}
 #it checkout -t origin ${GIT_BRANCH}
 
