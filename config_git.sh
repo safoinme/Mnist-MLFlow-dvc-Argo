@@ -11,7 +11,7 @@ set -e -x
 if [ ! -d ~/.ssh ]; then
 	echo "SSH Key was not found. Configuring SSH Key."
 	mkdir ~/.ssh
-	echo -e "${SSH_KEY}" > ~/.ssh/id_rsa
+	cp /secret/mountpath/ssh-privatekey ~/.ssh/id_rsa
 	chmod 700 ~/.ssh
 	chmod 600 ~/.ssh/id_rsa
 
