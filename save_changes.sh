@@ -20,7 +20,8 @@ fi
 for changed_file in ${CHANGES}; do
 	if [[ "${changed_file}" == "*.dvc" ]]; then
 		CHANGES_FOUND="1"
-		git add "${changed_file}"
+        echo ${changed_file}
+		git add ${changed_file}
 	fi
 done
 
