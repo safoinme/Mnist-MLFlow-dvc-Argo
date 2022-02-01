@@ -10,12 +10,12 @@ set -e -x
 
 # Set up our SSH Key
 if [ ! -d ~/.ssh ]; then
-	echo "SSH Key was not found. Configuring SSH Key."
 	mkdir /root/.ssh
 	cp /secret/mountpath/ssh-privatekey /root/.ssh/id_rsa
+	ls -la /root/.ssh
 	chmod 700 /root/.ssh
 	chmod 600 /root/.ssh/id_rsa
-	echo -e "Host *\n    StrictHostKeyChecking no\n    UserKnownHostsFile=/dev/null\n" > /root/.ssh/config
+	#echo -e "Host *\n    StrictHostKeyChecking no\n    UserKnownHostsFile=/dev/null\n" > /root/.ssh/config
 fi
 
 
