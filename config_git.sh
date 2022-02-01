@@ -26,6 +26,5 @@ git config user.name "${COMMIT_USER}"
 git config user.email "${COMMIT_EMAIL}"
 git remote set-url origin ${GIT_REPO}
 #it checkout -t origin ${GIT_BRANCH}
-git status 
 
 dvc pull
