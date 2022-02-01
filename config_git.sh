@@ -17,12 +17,15 @@ if [ ! -d ~/.ssh ]; then
 	#echo -e "Host *\n    StrictHostKeyChecking no\n    UserKnownHostsFile=/dev/null\n" > /root/.ssh/config
 fi
 
+git status 
 
 # Configure our user and email to commit as.
-git remote -v
+ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+ssh-keygen -t rsa -C "${COMMIT_EMAIL}"
 git config user.name "${COMMIT_USER}"
 git config user.email "${COMMIT_EMAIL}"
 git remote set-url origin ${GIT_REPO}
 #it checkout -t origin ${GIT_BRANCH}
+git status 
 
 dvc pull
