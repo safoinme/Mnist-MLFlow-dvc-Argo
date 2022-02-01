@@ -17,6 +17,7 @@ if [ ! -d ~/.ssh ]; then
 	#echo -e "Host *\n    StrictHostKeyChecking no\n    UserKnownHostsFile=/dev/null\n" > /root/.ssh/config
 fi
 
+dvc pull
 git status 
 
 # Configure our user and email to commit as.
@@ -27,4 +28,3 @@ git config user.email "${COMMIT_EMAIL}"
 git remote set-url origin ${GIT_REPO}
 #it checkout -t origin ${GIT_BRANCH}
 
-dvc pull
