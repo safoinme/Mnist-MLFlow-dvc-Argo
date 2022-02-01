@@ -2,6 +2,8 @@
 set -e -x
 
 # Verify our environment variables are set
+[ -z "${GIT_REPO}" ] && { echo "Need to set GIT_REPO"; exit 1; }
+[ -z "${GIT_BRANCH}" ] && { echo "Need to set GIT_BRANCH"; exit 1; }
 [ -z "${COMMIT_USER}" ] && { echo "Need to set COMMIT_USER"; exit 1; }
 [ -z "${COMMIT_EMAIL}" ] && { echo "Need to set COMMIT_EMAIL"; exit 1; }
 
@@ -9,18 +11,19 @@ set -e -x
 # Set up our SSH Key
 if [ ! -d ~/.ssh ]; then
 	echo "SSH Key was not found. Configuring SSH Key."
-	mkdir ~/.ssh
-	cp /secret/mountpath/ssh-privatekey ~/.ssh/id_rsa
-	chmod 700 ~/.ssh
-	chmod 600 ~/.ssh/id_rsa
-
-	echo -e "Host *\n    StrictHostKeyChecking no\n    UserKnownHostsFile=/dev/null\n" > ~/.ssh/config
+	mkdir /root/.ssh
+	cp /secret/mountpath/ssh-privatekey /root/.ssh/id_rsa
+	chmod 700 /root/.ssh
+	chmod 600 /root/.ssh/id_rsa
+	echo -e "Host *\n    StrictHostKeyChecking no\n    UserKnownHostsFile=/dev/null\n" > /root/.ssh/config
 fi
 
 
 # Configure our user and email to commit as.
 git config user.name "${COMMIT_USER}"
 git config user.email "${COMMIT_EMAIL}"
+git remote add origin ${GIT_REPO}
+git checkout -t origin ${GIT_BRANCH}
 
 # Configure dvc and pull dataset.
 dvc remote add -d minikubeminio s3://dvc-bucket/
