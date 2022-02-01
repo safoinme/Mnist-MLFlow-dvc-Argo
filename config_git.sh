@@ -18,8 +18,6 @@ if [ ! -d ~/.ssh ]; then
 fi
 
 dvc pull
-git status 
-
 # Configure our user and email to commit as.
 ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 git config --global user.name "${COMMIT_USER}"
