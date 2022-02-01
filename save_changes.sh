@@ -8,6 +8,8 @@ git add *.dvc
 CHANGES_FOUND=""
 
 CHANGES=`git status -s | awk {'print $2'}`
+echo ${CHANGES}
+
 if [ -z "${CHANGES}" ]; then
 	echo "No changes detected."
 	echo "Must be changes on dataset folder"
