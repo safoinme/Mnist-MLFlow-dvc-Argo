@@ -18,15 +18,14 @@ fi
 
 # Add all changed files that end with .dvc to our git ! the objective of the script is to save changes on data not code that's why we only add .dvc
 for changed_file in ${CHANGES}; do
-	if [[ "${changed_file}" == "*.dvc" ]]; then
+	if [[ "${changed_file}" == *.dvc ]]; then
 		CHANGES_FOUND="1"
-        echo ${changed_file}
 		git add ${changed_file}
 	fi
 done
 
 # Commit and push the detected changes if they are found. and push new dataset version to S3 Storage
-if [ ! -z "${CHANGES}" ]; then
+if [ ! -z "${CHANGES_FOUND}" ]; then
 	echo "Changes detected."
     current="`date +'%Y-%m-%d %H:%M:%S'`"
     message="Dataset detected changes: $current"
