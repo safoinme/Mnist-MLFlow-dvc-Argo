@@ -29,7 +29,7 @@ if [ ! -z "${CHANGES}" ]; then
 	echo "Changes detected."
     current="`date +'%Y-%m-%d %H:%M:%S'`"
     message="Dataset detected changes: $current"
-	git commit -m "$msg"
+	git commit -m "$message"
     dvc push
 	git push origin argo
 fi
