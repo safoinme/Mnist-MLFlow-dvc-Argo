@@ -4,7 +4,6 @@ set -e -x
 # Verify our environment variables are set
 [ -z "${COMMIT_USER}" ] && { echo "Need to set COMMIT_USER"; exit 1; }
 [ -z "${COMMIT_EMAIL}" ] && { echo "Need to set COMMIT_EMAIL"; exit 1; }
-[ -z "${SSH_KEY}" ] && { echo "Need to set SSH_KEY"; exit 1; }
 
 
 # Set up our SSH Key
@@ -24,6 +23,10 @@ git config user.name "${COMMIT_USER}"
 git config user.email "${COMMIT_EMAIL}"
 
 # Configure dvc and pull dataset.
+dvc remote add -d minikubeminio s3://dvc-bucket/
+dvc remote modify minikubeminio endpointurl http://10.105.56.43:9000
+dvc remote modify minikubeminio access_key_id "minio"
+dvc remote modify minikubeminio secret_access_key "Do&BfNOtNcWqGtWV5i"
 dvc pull
 
 #dvc remote add -d minikubeminio s3://dvc-bucket/
