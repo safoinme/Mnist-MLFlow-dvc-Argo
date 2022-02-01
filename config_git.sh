@@ -19,6 +19,7 @@ fi
 
 
 # Configure our user and email to commit as.
+git remote -v
 git config user.name "${COMMIT_USER}"
 git config user.email "${COMMIT_EMAIL}"
 git remote set-url origin ${GIT_REPO}
