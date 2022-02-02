@@ -1,0 +1,160 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: mnist-workflow
+spec:
+  entrypoint: mnist-workflow-preprocess-train-deploy
+  volumes:
+  - name: git-private-key
+    secret:
+      secretName: git-secret-ssh
+  templates:
+  - name: mnist-workflow-preprocess-train-deploy
+    steps:
+    - - name: pre-process            # hello1 is run before the following steps
+        template: mnist-preprocess
+    - - name: train-original           # hello1 is run before the following steps
+        template: mnist-train-original
+      - name: train-preprocessed           # hello1 is run before the following steps
+        template: mnist-train-preprocessed
+  - name: mnist-preprocess
+    inputs:
+      artifacts:
+      - name: repo-source
+        path: /app
+        git:
+          repo: https://github.com/safoinme/mnist-dvc.git
+          revision: "argo"
+    container:
+      image: ouassine/kadm:0.1.0
+      volumeMounts:
+        - name: git-private-key
+          mountPath: "/secret/mountpath"
+      env:
+          - name: COMMIT_USER
+            valueFrom:
+              secretKeyRef:
+                name: git-credentials
+                key: GIT_USERNAME
+          - name: COMMIT_EMAIL
+            valueFrom:
+              secretKeyRef:
+                name: git-credentials
+                key: GIT_MAIL
+          - name: GIT_REPO
+            value: git@github.com:safoinme/mnist-dvc.git
+          - name: GIT_BRANCH
+            value: "argo"
+      command: [sh, -c]
+      args: 
+        - ./config_git.sh;
+          python3 pre-process.py;
+          ./save_changes.sh
+      workingDir: /app
+  - name: mnist-train-original 
+    inputs:
+      artifacts:
+      - name: repo-source
+        path: /app
+        git:
+          repo: https://github.com/safoinme/mnist-dvc.git
+          revision: "argo"
+    container:
+      image: ouassine/kadm:0.1.0
+      volumeMounts:
+        - name: git-private-key
+          mountPath: "/secret/mountpath"
+      env:
+          - name: COMMIT_USER
+            valueFrom:
+              secretKeyRef:
+                name: git-credentials
+                key: GIT_USERNAME
+          - name: COMMIT_EMAIL
+            valueFrom:
+              secretKeyRef:
+                name: git-credentials
+                key: GIT_MAIL
+          - name: MLFLOW_TRACKING_URI
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: MLFLOW_TRACKING_URI
+          - name: MLFLOW_S3_ENDPOINT_URL
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: MLFLOW_S3_ENDPOINT_URL
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: AWS_SECRET_ACCESS_KEY
+          - name: GIT_REPO
+            value: git@github.com:safoinme/mnist-dvc.git
+          - name: GIT_BRANCH
+            value: "argo"
+      command: [sh, -c]
+      args: 
+        - ./config_git.sh;
+          python3 train.py
+      workingDir: /app
+  - name: mnist-train-preprocessed
+    inputs:
+      artifacts:
+      - name: repo-source
+        path: /app
+        git:
+          repo: https://github.com/safoinme/mnist-dvc.git
+          revision: "argo"
+    container:
+      image: ouassine/kadm:0.1.0
+      volumeMounts:
+        - name: git-private-key
+          mountPath: "/secret/mountpath"
+      env:
+          - name: COMMIT_USER
+            valueFrom:
+              secretKeyRef:
+                name: git-credentials
+                key: GIT_USERNAME
+          - name: COMMIT_EMAIL
+            valueFrom:
+              secretKeyRef:
+                name: git-credentials
+                key: GIT_MAIL
+          - name: MLFLOW_TRACKING_URI
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: MLFLOW_TRACKING_URI
+          - name: MLFLOW_S3_ENDPOINT_URL
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: MLFLOW_S3_ENDPOINT_URL
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: AWS_SECRET_ACCESS_KEY
+          - name: GIT_REPO
+            value: git@github.com:safoinme/mnist-dvc.git
+          - name: GIT_BRANCH
+            value: "argo"
+      command: [sh, -c]
+      args: 
+        - ./config_git.sh;
+          python3 train-preprocess.py
+      workingDir: /app
+  
