@@ -1,8 +1,0 @@
-[core]
-    remote = minikubeminio
-    autostage = true
-['remote "minikubeminio"']
-    url = s3://dvc-bucket/
-    endpointurl = http://10.105.56.43:9000
-    access_key_id = minio
-    secret_access_key = Do&BfNOtNcWqGtWV5i
