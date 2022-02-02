@@ -26,13 +26,15 @@ RUN apt-get update && apt-get install -y \
     git
 
 RUN python3 -m pip --no-cache-dir install --upgrade \
-    setuptools
+    setuptools 
+    
+RUN pip3 install --no-cache-dir grpcio==1.36.1
 
 # Some TF tools expect a "python" binary
 RUN ln -s $(which python3) /usr/local/bin/python
 
 ARG TF_PACKAGE=tensorflow
-RUN python3 -m pip install --no-cache-dir ${TF_PACKAGE}
+RUN python3 -m pip install --no-cache-dir tensorflow -f https://tf.kmtea.eu/whl/stable.html
 
 WORKDIR /app
 
