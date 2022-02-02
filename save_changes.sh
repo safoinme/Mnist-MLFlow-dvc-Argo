@@ -18,7 +18,9 @@ fi
 
 # Add all changed files that end with .dvc to our git ! the objective of the script is to save changes on data not code that's why we only add .dvc
 for changed_file in ${CHANGES}; do
+    echo "entered loop ${changed_file}"
 	if [ "${changed_file##*.}" = "dvc"  ]; then
+        echo "chnages are in ${changed_file}"
 		CHANGES_FOUND="1"
 		git add ${changed_file}
 	fi

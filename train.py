@@ -32,7 +32,7 @@ def main():
     # This enables Valohai to version your metadata
     # and for you to use it to compare experiments
     mlflow.keras.autolog()
-    results = model.fit(x_train, y_train, epochs=20,validation_data=(x_test, y_test))
+    results = model.fit(x_train, y_train, epochs=10,validation_data=(x_test, y_test))
 
     #with mlflow.start_run() as run:
     #    mlflow.keras.lpipog_model(model, "mnist-keras")
@@ -43,5 +43,6 @@ def main():
 
 
 if __name__ == '__main__':
+    mlflow.set_tracking_uri("http://0.0.0.0:5000")
     mlflow.set_experiment("mnist-example")
     main()
