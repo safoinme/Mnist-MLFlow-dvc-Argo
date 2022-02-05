@@ -1,6 +1,7 @@
 import mlflow
 from mlflow.entities import ViewType
 from mlflow.tracking import MlflowClient
+from distutils.dir_util import copy_tree
 import os 
 
 def main():
@@ -30,9 +31,16 @@ def main():
 
     #Get the model Artifact from the storage bucket 
     local_path = client.download_artifacts(best_run, "model", local_dir)
+
+    models_dir = "/tmp/mnist-example/1/"
+    #local_dir = os.path.join(os.getcwd(), "tmp" )
+    if not os.path.exists(models_dir):
+        os.makedirs(models_dir)
+
+    copy_tree("/tmp/artifact_downloads/model/data/model", models_dir)
     #print("Artifacts downloaded in: {}".format(local_path))
     #print("Artifacts: {}".format(os.listdir(local_path)))
 
 if __name__ == '__main__':
-    mlflow.mlflow.set_tracking_uri("http://127.0.0.1:5000")
+    #mlflow.mlflow.set_tracking_uri("http://127.0.0.1:5000")
     main()
