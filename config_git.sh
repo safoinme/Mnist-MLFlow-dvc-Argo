@@ -12,7 +12,7 @@ set -e -x
 [ -z "${AWS_SECRET_ACCESS_KEY}" ] && { echo "Need to set COMMIT_EMAIL"; exit 1; }
 
 # Set up our SSH Key
-if [ ! -d ~/.ssh ]; then
+if [ ! -d /root/.ssh ]; then
 	mkdir /root/.ssh
 	cp /secret/mountpath/ssh-privatekey /root/.ssh/id_rsa
 	chmod 700 /root/.ssh

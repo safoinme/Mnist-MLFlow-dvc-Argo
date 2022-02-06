@@ -18,7 +18,7 @@ def main():
     # and upload output it to the default data store
 
     print('Saving preprocessed data')
-    save_path = os.path.join(project_path, data_folder, "pre-processed-mnist.npz")
+    save_path = os.path.join(project_path, data_folder, "preprocessedmnist.npz")
     np.savez_compressed(save_path, x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
 
 
