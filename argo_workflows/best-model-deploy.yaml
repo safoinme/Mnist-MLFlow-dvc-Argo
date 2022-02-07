@@ -1,9 +1,9 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: mnist-workflow
+  generateName: mnist-deploy-workflow
 spec:
-  entrypoint: mnist-workflow-preprocess-train-deploy
+  entrypoint: mnist-workflow-best-model-deploy
   volumes:
   - name: saved-model-artifact
   templates:
