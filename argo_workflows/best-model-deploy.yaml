@@ -6,11 +6,6 @@ spec:
   entrypoint: mnist-workflow-preprocess-train-deploy
   volumes:
   - name: saved-model-artifact
-    spec:
-    accessModes: [ "ReadWriteOnce" ]
-    resources:
-      requests:
-        storage: 0.5Gi 
   templates:
   - name: mnist-workflow-best-model-deploy
     steps:

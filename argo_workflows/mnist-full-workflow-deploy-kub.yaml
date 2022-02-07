@@ -13,7 +13,7 @@ spec:
     accessModes: [ "ReadWriteOnce" ]
     resources:
       requests:
-        storage: 0.5Gi 
+        storage: 1Gi 
   templates:
   - name: mnist-workflow-preprocess-train-deploy
     steps:
