@@ -1,0 +1,123 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: mnist-workflow
+spec:
+  entrypoint: mnist-workflow-preprocess-train-deploy
+  volumes:
+  - name: saved-model-artifact
+    spec:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 0.5Gi 
+  templates:
+  - name: mnist-workflow-best-model-deploy
+    steps:
+    - - name: retrieve-best-model           # retrieve-best-model is run before the following steps and after training steps
+        template: mlflow-mnist-best-model
+    - - name: deploy-model           # deploy-model is run after the retrieve-best-model step and only if retrieve-best-model have tf result
+        template: mnist-deploy-tf-serving
+        when: "{{steps.retrieve-best-model.outputs.parameters.model-flavor}} == tf"
+        arguments:
+          artifacts:
+            - name: saved-model-artifact
+              from: "{{steps.retrieve-best-model.outputs.artifacts.saved-model-artifact}}"
+
+  - name: mlflow-mnist-best-model
+    inputs:
+      artifacts:
+      - name: repo-source
+        path: /app
+        git:
+          repo: https://github.com/safoinme/Mnist-MLFlow-dvc-Argo.git
+          revision: "argo"
+    container:
+      image: safoinme/python-mlflow-expirements:0.1.0
+      env:
+          - name: MLFLOW_TRACKING_URI
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: MLFLOW_TRACKING_URI
+          - name: MLFLOW_S3_ENDPOINT_URL
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: MLFLOW_S3_ENDPOINT_URL
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mlflow-access
+                key: AWS_SECRET_ACCESS_KEY
+      command: [sh, -c]
+      args: 
+        - python3 experiment_comparaison.py;      
+      workingDir: /app
+    outputs:
+      parameters:
+        - name: model-flavor
+          valueFrom:
+            path: /tmp/artifact_downloads/model/data/save_format.txt
+      artifacts:
+        - name: saved-model-artifact
+          path: /tmp/models
+  - name: mnist-deploy-tf-serving
+    inputs:
+      artifacts:
+      - name: saved-model-artifact
+        path: /tmp/models
+    container:
+      image: tensorflow/serving
+      volumeMounts:
+        - name: saved-model-artifact
+          mountPath: "/models/"
+      command: [sh, -c]
+      args: ["echo \"it was tf\""]  
+   
+  #- name: mnist-deploy-tf-serving
+  #  resource:
+  #    action: create
+      # successCondition and failureCondition are optional expressions which are
+      # evaluated upon every update of the resource. If failureCondition is ever
+      # evaluated to true, the step is considered failed. Likewise, if successCondition
+      # is ever evaluated to true the step is considered successful. It uses kubernetes
+      # label selection syntax and can be applied against any field of the resource
+      # (not just labels). Multiple AND conditions can be represented by comma
+      # delimited expressions. For more details, see:
+      # https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+  #    successCondition: status.succeeded > 0
+  #    failureCondition: status.failed > 3
+  #    manifest: |
+  #      apiVersion: apps/v1
+  #      kind: Deployment
+  #      metadata:
+  #        name: tf-serving-deployment
+  #      spec:
+  #        replicas: 1
+  #        template:
+  #          metadata:
+  #            labels:
+  #              app: tf-serving-server
+  #          spec:
+  #            containers:
+  #            - name: tf-serving-container
+  #              image: tensorflow/serving:latest
+  #              ports:
+  #              - containerPort: 8500
+  #      ---
+  #      apiVersion: v1
+  #      kind: Service
+  #      metadata:
+  #        labels:
+  #          run: tf-serving-service
+  #        name: tf-serving-service
+  #      spec:
+  #        ports:
+  #        - port: 8500
+  #          targetPort: 8500
