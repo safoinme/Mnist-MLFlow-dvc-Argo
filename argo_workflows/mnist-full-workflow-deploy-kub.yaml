@@ -261,8 +261,8 @@ spec:
         - name: saved-model-artifact
           mountPath: "/models/"
       command: [sh, -c]
-      args: 
-        - "echo \"it was tf\"";      
+      args: ["echo \"it was tf\""]  
+   
   #- name: mnist-deploy-tf-serving
   #  resource:
   #    action: create
