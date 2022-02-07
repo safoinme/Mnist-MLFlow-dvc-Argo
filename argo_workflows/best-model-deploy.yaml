@@ -69,11 +69,8 @@ spec:
         path: /tmp/models
     container:
       image: tensorflow/serving
-      volumeMounts:
-        - name: saved-model-artifact
-          mountPath: "/tmp/models/"
       command: [sh, -c]
-      args: ["tensorflow_model_server --port=8500 --rest_api_port=8501 --model_name=mnist --model_base_path=/tmp/models/mnist-model"]  
+      args: ["tensorflow_model_server --port=8500 --rest_api_port=8501 --model_name=mnist --model_base_path=/tmp/mnist-model"]  
    
   #- name: mnist-deploy-tf-serving
   #  resource:
