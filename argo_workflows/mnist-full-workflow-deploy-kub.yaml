@@ -262,7 +262,7 @@ spec:
           mountPath: "/models/"
       command: [sh, -c]
       args: 
-       - "echo \"it was tf\"";      
+        - "echo \"it was tf\"";      
   #- name: mnist-deploy-tf-serving
   #  resource:
   #    action: create
