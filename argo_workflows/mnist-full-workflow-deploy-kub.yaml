@@ -8,6 +8,12 @@ spec:
   - name: git-private-key
     secret:
       secretName: git-secret-ssh
+  - name: saved-model-artifact
+    spec:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 0.5Gi 
   templates:
   - name: mnist-workflow-preprocess-train-deploy
     steps:
