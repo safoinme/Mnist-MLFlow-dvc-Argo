@@ -73,7 +73,7 @@ spec:
         - name: saved-model-artifact
           mountPath: "/models/"
       command: [sh, -c]
-      args: ["echo \"it was tf\""]  
+      args: ["/usr/bin/tf_serving_entrypoint.sh"]  
    
   #- name: mnist-deploy-tf-serving
   #  resource:
