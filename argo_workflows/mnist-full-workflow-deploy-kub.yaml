@@ -8,12 +8,6 @@ spec:
   - name: git-private-key
     secret:
       secretName: git-secret-ssh
-  - name: saved-model-artifact
-    spec:
-    accessModes: [ "ReadWriteOnce" ]
-    resources:
-      requests:
-        storage: 1Gi 
   templates:
   - name: mnist-workflow-preprocess-train-deploy
     steps:
@@ -256,15 +250,12 @@ spec:
         - name: model-uri
           valueFrom:
             path: /tmp/best_model_artifact_uri.txt
-      #artifacts:
-      #  - name: saved-model-artifact
-      #    path: /tmp/models
   - name: mnist-deploy-tf-serving
     inputs:
       parameters:
       - name: model-uri
     container:
-      image: tensorflow/serving
+      image: safoinme/python-mlflow-expirements:0.1.0
       command: [sh, -c]
       args: ["echo {{inputs.parameters.model-uri}} "]  
    
