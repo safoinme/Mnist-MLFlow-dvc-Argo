@@ -63,6 +63,8 @@ def main():
         os.makedirs(models_dir)
 
     copy_tree("/tmp/artifact_downloads/model/data/model", models_dir)
+
+    client.log_artifacts(best_run, "/tmp/models/mnist-example" ,"deployment-model" )
     #print("Artifacts downloaded in: {}".format(local_path))
     #print("Artifacts: {}".format(os.listdir(local_path)))
     #print(get_model_s3_src(best_run))
