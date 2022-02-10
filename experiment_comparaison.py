@@ -46,8 +46,7 @@ def main():
 
     def get_latest_model_version_info(model_name):
         model_latest_version = client.get_latest_versions(model_name, stages=["None"])
-        latest_model_info = {model_latest_version[0].run_id, model_latest_version[0].version}
-        return latest_model_info
+        return model_latest_version[0].run_id, model_latest_version[0].version
     
     def check_accuracy_improvment(latest_run_id, best_run):
         improvment = False if best_run == latest_run_id else True
@@ -95,7 +94,7 @@ def main():
     client.log_artifacts(best_run, "/tmp/models" ,"deployment-model" )
 
     register_model = create_registered_model_version(model_name)
-    latest_model_version, latest_run_id = get_latest_model_version_info(model_name)
+    latest_run_id, latest_model_version  = get_latest_model_version_info(model_name)
     if check_accuracy_improvment(latest_run_id, best_run):
         registered_model = register_the_best_model(best_run)
     else :
