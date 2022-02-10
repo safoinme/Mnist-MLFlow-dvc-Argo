@@ -249,7 +249,7 @@ spec:
             path: /tmp/artifact_downloads/model/data/save_format.txt
       artifacts:
         - name: saved-model-artifact
-          path: /tmp/mnist-example
+          path: /tmp/models
   - name: mnist-deploy-tf-serving
     container:
       image: alpine:3.6
