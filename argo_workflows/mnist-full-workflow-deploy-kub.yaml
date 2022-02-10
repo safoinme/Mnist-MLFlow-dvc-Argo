@@ -25,7 +25,7 @@ spec:
         arguments:
           parameters:
             - name: model-uri
-              from: "{{steps.retrieve-best-model.outputs.artifacts.model-uri}}"
+              from: "{{steps.retrieve-best-model.outputs.parameters.model-uri}}"
 
   - name: mnist-preprocess
     inputs:
