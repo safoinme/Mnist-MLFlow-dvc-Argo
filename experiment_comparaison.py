@@ -10,8 +10,11 @@ from mlflow.tracking.artifact_utils import _download_artifact_from_uri
 def main():
     #Initialize the mlflow client to get the artifact
     client = MlflowClient()
+
     #Set the expirement by name
-    experiment = mlflow.get_experiment_by_name("mnist-example")     
+    expirement_name = "mnist-example"
+    model_name = "mnist-example"
+    experiment = mlflow.get_experiment_by_name(expirement_name)     
 
     #Get infos about runs such as stage of the run and validation accuracy, and return the best run id
     def print_auto_logged_info(run_infos):
@@ -27,25 +30,50 @@ def main():
         model_src = RunsArtifactRepository.get_underlying_uri(run_uri)
         return model_src
 
-    def create_registered_model_version(best_run):
+    def get_model_deployment_s3_src(best_run):
+        run_uri = "runs:/{}/deployment-model/{}".format(best_run,model_name)
+        model_src = RunsArtifactRepository.get_underlying_uri(run_uri)
+        return model_src
+
+
+    def create_registered_model_version(model_name):
         try :
-            client.create_registered_model("mnist-model")
+            client.create_registered_model(model_name)
         except:
             print("Model already registered")
-            pass
+            return False
+        return True
+
+    def get_latest_model_version_info(model_name):
+        model_latest_version = client.get_latest_versions(model_name, stages=["None"])
+        latest_model_info = {model_latest_version[0].run_id, model_latest_version[0].version}
+        return latest_model_info
+    
+    def check_accuracy_improvment(latest_run_id, best_run):
+        improvment = False if best_run == latest_run_id else True
+        return improvment
+
+    def register_the_best_model(best_run):
+        result = None
         try :
             result = client.create_model_version(
-            name="mnist-model",
-            source=get_model_s3_src(best_run),
+            name=expirement_name,
+            source=get_model_deployment_s3_src(best_run),
             run_id=best_run
             )
         except :
-            print("No better expirement is found")
-            pass
-        return result
+            return("Something went wrong")
+        return(result)
+
+    def save_best_model_artifact_uri(model_name,model_version):
+        artifact_uri = client.get_model_version_download_uri(model_name, model_version)
+        file = open("/tmp/best_model_artifact_uri.txt","w+")
+        file.write(artifact_uri)
+        file.close()
+        return artifact_uri
 
     #Return the best val accuracy run of The choosen exepiremnt
-    best_run = print_auto_logged_info(mlflow.list_run_infos(experiment.experiment_id, run_view_type=ViewType.ALL, max_results=1, order_by=["metric.val_accuracy DESC"]))
+    best_run = print_auto_logged_info(mlflow.list_run_infos(experiment.experiment_id, run_view_type=ViewType.ACTIVE_ONLY, max_results=1, order_by=["metric.val_accuracy DESC"]))
     #df = mlflow.search_runs([experiment_id], order_by=["metrics.m DESC"]) we can do same using this function
     
     #We gonna create a tmp folder to store the artifacts into
@@ -64,15 +92,18 @@ def main():
 
     copy_tree("/tmp/artifact_downloads/model/data/model", models_dir)
 
-    client.log_artifacts(best_run, "/tmp/models/mnist-example" ,"deployment-model" )
-    #print("Artifacts downloaded in: {}".format(local_path))
-    #print("Artifacts: {}".format(os.listdir(local_path)))
-    #print(get_model_s3_src(best_run))
-    #print(client.get_run(best_run).data.metrics.val_accuracy)
-    #print(create_registered_model_version(best_run))
+    client.log_artifacts(best_run, "/tmp/models" ,"deployment-model" )
 
-    #local_model_path = _download_artifact_from_uri(artifact_uri="models:/mnist-model/latest", output_path="/Users/safoinpers/MLArgo/mnist_example/")
-    #print(local_model_path)
+    register_model = create_registered_model_version(model_name)
+    latest_model_version, latest_run_id = get_latest_model_version_info(model_name)
+    if check_accuracy_improvment(latest_run_id, best_run):
+        registered_model = register_the_best_model(best_run)
+    else :
+        print("There is no improvement in the model")
+
+    artifact_uri = save_best_model_artifact_uri(model_name,int(latest_model_version))
+    print(artifact_uri)
+    
 
 if __name__ == '__main__':
     #mlflow.mlflow.set_tracking_uri("http://127.0.0.1:5000")

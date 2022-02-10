@@ -29,9 +29,9 @@ spec:
         template: mnist-deploy-tf-serving
         when: "{{steps.retrieve-best-model.outputs.parameters.model-flavor}} == tf"
         arguments:
-          artifacts:
-            - name: saved-model-artifact
-              from: "{{steps.retrieve-best-model.outputs.artifacts.saved-model-artifact}}"
+          parameters:
+            - name: model-uri
+              from: "{{steps.retrieve-best-model.outputs.artifacts.model-uri}}"
 
   - name: mnist-preprocess
     inputs:
@@ -253,21 +253,20 @@ spec:
         - name: model-flavor
           valueFrom:
             path: /tmp/artifact_downloads/model/data/save_format.txt
-      artifacts:
-        - name: saved-model-artifact
-          path: /tmp/models
+        - name: model-uri
+          valueFrom:
+            path: /tmp/best_model_artifact_uri.txt
+      #artifacts:
+      #  - name: saved-model-artifact
+      #    path: /tmp/models
   - name: mnist-deploy-tf-serving
     inputs:
-      artifacts:
-      - name: saved-model-artifact
-        path: /tmp/models
+      parameters:
+      - name: model-uri
     container:
       image: tensorflow/serving
-      volumeMounts:
-        - name: saved-model-artifact
-          mountPath: "/models/"
       command: [sh, -c]
-      args: ["echo \"it was tf\""]  
+      args: ["echo {{inputs.parameters.model-uri}} "]  
    
   #- name: mnist-deploy-tf-serving
   #  resource:
