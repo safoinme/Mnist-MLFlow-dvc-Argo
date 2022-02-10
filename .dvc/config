@@ -1,4 +1,2 @@
-[core]
-    remote = minio
 ['remote "minio"']
     endpointurl = http://127.0.0.1:9000
