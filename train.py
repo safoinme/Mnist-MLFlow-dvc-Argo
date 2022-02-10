@@ -35,7 +35,7 @@ def main():
     results = model.fit(x_train, y_train, epochs=20,validation_data=(x_test, y_test))
 
     #with mlflow.start_run() as run:
-    #    mlflow.keras.lpipog_model(model, "mnist-keras")
+    #    mlflow.keras.log_model(model, "mnist-keras")
 
     #suffix = uuid.uuid4()
     #output_path = valohai.outputs().path(f'model-{suffix}.h5')
@@ -45,3 +45,5 @@ def main():
 if __name__ == '__main__':
     mlflow.set_experiment("mnist-example")
     main()
+
+
