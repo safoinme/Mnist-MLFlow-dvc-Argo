@@ -15,9 +15,11 @@ spec:
         template: mnist-deploy-tf-serving
         when: "{{steps.retrieve-best-model.outputs.parameters.model-flavor}} == tf"
         arguments:
-          artifacts:
-            - name: saved-model-artifact
-              from: "{{steps.retrieve-best-model.outputs.artifacts.saved-model-artifact}}"
+          parameters:
+            - name: predictor
+              value: "tensorflow"
+            - name: model-uri
+              value: "{{steps.retrieve-best-model.outputs.parameters.model-uri}}"
 
   - name: mlflow-mnist-best-model
     inputs:
@@ -59,57 +61,36 @@ spec:
         - name: model-flavor
           valueFrom:
             path: /tmp/artifact_downloads/model/data/save_format.txt
-      artifacts:
-        - name: saved-model-artifact
-          path: /tmp/models
+        - name: model-uri
+          valueFrom:
+            path: /tmp/best_model_artifact_uri.txt
+  #- name: mnist-deploy-tf-serving
+  #  inputs:
+  #    parameters:
+  #    - name: model-uri
+  #  container:
+  #    image: safoinme/python-mlflow-expirements:0.1.0
+  #    command: [sh, -c]
+  #    args: ["echo {{inputs.parameters.model-uri}} "]  
+  
   - name: mnist-deploy-tf-serving
     inputs:
-      artifacts:
-      - name: saved-model-artifact
-        path: /tmp/models
-    container:
-      image: tensorflow/serving
-      command: [sh, -c]
-      args: ["tensorflow_model_server --port=8500 --rest_api_port=8501 --model_name=mnist --model_base_path=/tmp/mnist-model"]  
-   
-  #- name: mnist-deploy-tf-serving
-  #  resource:
-  #    action: create
-      # successCondition and failureCondition are optional expressions which are
-      # evaluated upon every update of the resource. If failureCondition is ever
-      # evaluated to true, the step is considered failed. Likewise, if successCondition
-      # is ever evaluated to true the step is considered successful. It uses kubernetes
-      # label selection syntax and can be applied against any field of the resource
-      # (not just labels). Multiple AND conditions can be represented by comma
-      # delimited expressions. For more details, see:
-      # https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-  #    successCondition: status.succeeded > 0
-  #    failureCondition: status.failed > 3
-  #    manifest: |
-  #      apiVersion: apps/v1
-  #      kind: Deployment
-  #      metadata:
-  #        name: tf-serving-deployment
-  #      spec:
-  #        replicas: 1
-  #        template:
-  #          metadata:
-  #            labels:
-  #              app: tf-serving-server
-  #          spec:
-  #            containers:
-  #            - name: tf-serving-container
-  #              image: tensorflow/serving:latest
-  #              ports:
-  #              - containerPort: 8500
-  #      ---
-  #      apiVersion: v1
-  #      kind: Service
-  #      metadata:
-  #        labels:
-  #          run: tf-serving-service
-  #        name: tf-serving-service
-  #      spec:
-  #        ports:
-  #        - port: 8500
-  #          targetPort: 8500
+      parameters:
+      - name: model-uri
+      - name: predictor
+    resource:
+      action: create
+      manifest: |
+        apiVersion: "serving.kserve.io/v1beta1"
+        kind: "InferenceService"
+        metadata:
+          name: "mnist-example-s3"
+        spec:
+          predictor:
+            serviceAccountName: stminio
+            {{inputs.parameters.predictor}}:
+              storageUri: "{{inputs.parameters.model-uri}}"
+              resources:
+                limits:
+                  memory: 2Gi
+                  cpu: "1"
