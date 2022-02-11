@@ -273,7 +273,6 @@ spec:
         kind: "InferenceService"
         metadata:
           name: "mnist-example-s3"
-          namespace: kserve-deployement
         spec:
           predictor:
             serviceAccountName: stminio
@@ -281,8 +280,8 @@ spec:
               storageUri: "{{inputs.parameters.model-uri}}"
               resources:
                 limits:
-                  memory: 4Gi
-                  cpu: "2"
+                  memory: 2Gi
+                  cpu: "1"
   #- name: mnist-deploy-tf-serving
   #  resource:
   #    action: create
