@@ -103,7 +103,7 @@ def main():
     artifact_uri = save_best_model_artifact_uri(model_name,int(latest_model_version))
     print(artifact_uri)
     
-    client.download_artifacts(best_run, "deployment-model", "/Users/safoinpers/MLArgo/mnist_example/")
+    #client.download_artifacts(best_run, "deployment-model", "/Users/safoinpers/MLArgo/mnist_example/")
 
 if __name__ == '__main__':
     #mlflow.mlflow.set_tracking_uri("http://127.0.0.1:5000")
