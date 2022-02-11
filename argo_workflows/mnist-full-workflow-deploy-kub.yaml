@@ -24,6 +24,8 @@ spec:
         when: "{{steps.retrieve-best-model.outputs.parameters.model-flavor}} == tf"
         arguments:
           parameters:
+            - name: predictor
+              value: "tensorflow"
             - name: model-uri
               value: "{{steps.retrieve-best-model.outputs.parameters.model-uri}}"
 
@@ -250,15 +252,33 @@ spec:
         - name: model-uri
           valueFrom:
             path: /tmp/best_model_artifact_uri.txt
+  #- name: mnist-deploy-tf-serving
+  #  inputs:
+  #    parameters:
+  #    - name: model-uri
+  #  container:
+  #    image: safoinme/python-mlflow-expirements:0.1.0
+  #    command: [sh, -c]
+  #    args: ["echo {{inputs.parameters.model-uri}} "]  
+  
   - name: mnist-deploy-tf-serving
     inputs:
       parameters:
       - name: model-uri
-    container:
-      image: safoinme/python-mlflow-expirements:0.1.0
-      command: [sh, -c]
-      args: ["echo {{inputs.parameters.model-uri}} "]  
-   
+      - name: predictor
+    resource:
+      action: create
+      manifest: |
+        apiVersion: "serving.kserve.io/v1beta1"
+        kind: "InferenceService"
+        metadata:
+          name: "mnist-s3"
+        spec:
+          predictor:
+            serviceAccountName: sa
+            {{inputs.parameters.predictor}}:
+              storageUri: {{inputs.parameters.model-uri}}
+
   #- name: mnist-deploy-tf-serving
   #  resource:
   #    action: create
