@@ -272,13 +272,17 @@ spec:
         apiVersion: "serving.kserve.io/v1beta1"
         kind: "InferenceService"
         metadata:
-          name: "mnist-s3"
+          name: "mnist-example-s3"
+          namespace: kserve-deployement
         spec:
           predictor:
-            serviceAccountName: sa
+            serviceAccountName: stminio
             {{inputs.parameters.predictor}}:
-              storageUri: {{inputs.parameters.model-uri}}
-
+              storageUri: "{{inputs.parameters.model-uri}}"
+              resources:
+                limits:
+                  memory: 4Gi
+                  cpu: "2"
   #- name: mnist-deploy-tf-serving
   #  resource:
   #    action: create
