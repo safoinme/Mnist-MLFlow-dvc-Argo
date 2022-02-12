@@ -28,14 +28,6 @@ spec:
               value: "tensorflow"
             - name: model-uri
               value: "{{steps.retrieve-best-model.outputs.parameters.model-uri}}"
-
-
-
-
-
-
-
-
   - name: mnist-preprocess
     inputs:
       artifacts:
