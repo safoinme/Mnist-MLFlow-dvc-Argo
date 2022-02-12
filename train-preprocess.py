@@ -8,7 +8,7 @@ import mlflow
 def main():
     project_path =  os.getcwd()
     data_folder = 'dataset/'
-    input_path = os.path.join(project_path, data_folder, "preprocessedmnist.npz")
+    input_path = os.path.join(project_path, data_folder, "preprocessedmnist2.npz")
 
 
     with np.load(input_path, allow_pickle=True) as f:
