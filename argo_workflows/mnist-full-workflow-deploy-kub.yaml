@@ -24,6 +24,8 @@ spec:
         when: "{{steps.retrieve-best-model.outputs.parameters.model-flavor}} == tf"
         arguments:
           parameters:
+            - name: model-name-version
+              value: "{{steps.retrieve-best-model.outputs.parameters.model-name-version}}"
             - name: predictor
               value: "tensorflow"
             - name: model-uri
@@ -248,6 +250,9 @@ spec:
         - name: model-flavor
           valueFrom:
             path: /tmp/artifact_downloads/model/data/save_format.txt
+        - name: model-name-version
+          valueFrom:
+            path: /tmp/model_name_version.txt
         - name: model-uri
           valueFrom:
             path: /tmp/best_model_artifact_uri.txt
@@ -271,7 +276,8 @@ spec:
         apiVersion: "serving.kserve.io/v1beta1"
         kind: "InferenceService"
         metadata:
-          name: "mnist-example-s3"
+          name: "{{model-name-version}}"
+          namespace: kserve-deployement
         spec:
           predictor:
             serviceAccountName: stminio
