@@ -269,7 +269,7 @@ spec:
     inputs:
       parameters:
       - name: model-uri
-      - name: model-name-version}
+      - name: model-name-version
       - name: predictor
     resource:
       action: create
