@@ -269,6 +269,7 @@ spec:
     inputs:
       parameters:
       - name: model-uri
+      - name: model-name-version}
       - name: predictor
     resource:
       action: create
@@ -276,7 +277,7 @@ spec:
         apiVersion: "serving.kserve.io/v1beta1"
         kind: "InferenceService"
         metadata:
-          name: "{{model-name-version}}"
+          name: "{{inputs.parameters.model-name-version}}"
           namespace: kserve-deployement
         spec:
           predictor:
