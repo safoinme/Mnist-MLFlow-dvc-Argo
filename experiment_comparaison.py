@@ -86,8 +86,8 @@ def main():
 
     #Get the model Artifact from the storage bucket 
     local_path = client.download_artifacts(best_run, "model", local_dir)
-
-    models_dir = "/tmp/models/mnist-example/1/"
+    latest_run_id, latest_model_version  = get_latest_model_version_info(model_name)
+    models_dir = "/tmp/models/mnist-example/{}/".format(int(latest_model_version))
     #local_dir = os.path.join(os.getcwd(), "tmp" )
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
@@ -97,7 +97,6 @@ def main():
     client.log_artifacts(best_run, "/tmp/models" ,"deployment-model" )
 
     register_model = create_registered_model_version(model_name)
-    latest_run_id, latest_model_version  = get_latest_model_version_info(model_name)
     if check_accuracy_improvment(latest_run_id, best_run):
         registered_model = register_the_best_model(best_run)
     else :
